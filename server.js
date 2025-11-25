@@ -15,7 +15,38 @@ const PORT = process.env.PORT || 3000;
 
 
 // Middleware
-app.use(cors());
+// CORS configuration - allow frontend domain
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, or curl)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      process.env.FRONTEND_URL,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter(Boolean);
+    
+    // Allow if origin is in allowed list or if in development
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      // In production, be more strict but still allow if FRONTEND_URL is set
+      if (process.env.FRONTEND_URL && origin.includes(process.env.FRONTEND_URL)) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all for now - you can restrict this later
+      }
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
