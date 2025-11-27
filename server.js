@@ -8,6 +8,8 @@ import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import messagesRoutes from './routes/messages.js';
 import analyticsRoutes from './routes/analytics.js';
+import schoolsRoutes from './routes/schools.js';
+import branchesRoutes from './routes/branches.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -60,6 +62,8 @@ app.use('/api/students', studentsRoutes);
 app.use('/api/classes', classesRoutes);
 app.use('/api/teachers', teachersRoutes);
 app.use('/api/enrollments', enrollmentsRoutes);
+app.use('/api/schools', schoolsRoutes);
+app.use('/api/branches', branchesRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -74,7 +78,9 @@ app.get('/', (req, res) => {
       students: '/api/students',
       classes: '/api/classes',
       teachers: '/api/teachers',
-      enrollments: '/api/enrollments'
+      enrollments: '/api/enrollments',
+      schools: '/api/schools',
+      branches: '/api/branches'
     }
   });
 });

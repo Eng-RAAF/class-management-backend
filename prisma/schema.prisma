@@ -94,3 +94,36 @@ model Message {
   @@map("messages")
 }
 
+model School {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  address     String?
+  phone       String?
+  email       String?
+  principal   String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  branches    Branch[]
+
+  @@map("schools")
+}
+
+model Branch {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  schoolId    Int
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  address     String?
+  phone       String?
+  email       String?
+  manager     String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("branches")
+}
+
