@@ -10,6 +10,8 @@ import {
 const router = express.Router();
 
 // Get all classes
+//
+//ali nuux
 router.get('/', async (req, res) => {
   try {
     const classes = await getClasses();
