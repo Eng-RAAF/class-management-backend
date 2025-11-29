@@ -164,7 +164,7 @@ router.post('/register', async (req, res) => {
       email: normalizedEmail,
       password: hashedPassword,
       name,
-      role: role || 'user'
+      role: role || 'student'
     };
 
     // Only add phone number if provided
