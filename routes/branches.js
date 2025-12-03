@@ -13,6 +13,7 @@ const router = express.Router();
 // Get all branches
 //branchesadda
 //schooladda
+//branchupdate
 router.get('/', async (req, res) => {
   try {
     const branches = await getBranches();
