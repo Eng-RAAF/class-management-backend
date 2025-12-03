@@ -11,6 +11,7 @@ import {
 const router = express.Router();
 
 // Get all branches
+//branchesadda
 //schooladda
 router.get('/', async (req, res) => {
   try {
