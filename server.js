@@ -50,6 +50,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 // maxamuud
+//branchesadda
 
 app.use(cors(corsOptions));
 app.use(express.json());
