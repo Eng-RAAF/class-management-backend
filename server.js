@@ -55,7 +55,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 // maxamuud
-//xaadir
+//sahaln
 
 app.use(cors(corsOptions));
 app.use(express.json());
