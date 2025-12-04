@@ -1,7 +1,7 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
 import bcrypt from 'bcryptjs';
-import { authenticate, requireAdmin, authorizeOwnerOrAdmin } from '../middleware/auth.js';
+import { authenticate, requireAdmin, requireSuperAdmin, authorizeOwnerOrAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -169,8 +169,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete user
-router.delete('/:id', async (req, res) => {
+// Delete user - requires super admin role
+router.delete('/:id', authenticate, requireSuperAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 

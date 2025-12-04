@@ -97,9 +97,10 @@ export const authorize = (...allowedRoles) => {
 };
 
 // Specific role checks (convenience functions)
-export const requireAdmin = authorize('admin');
-export const requireTeacher = authorize('admin', 'teacher');
-export const requireStudent = authorize('admin', 'teacher', 'student');
+export const requireSuperAdmin = authorize('superadmin');
+export const requireAdmin = authorize('superadmin', 'admin');
+export const requireTeacher = authorize('superadmin', 'admin', 'teacher');
+export const requireStudent = authorize('superadmin', 'admin', 'teacher', 'student');
 
 // Owner or admin check - allows resource owner or admin
 export const authorizeOwnerOrAdmin = (userIdField = 'userId') => {

@@ -1,5 +1,6 @@
 // Role definitions and permissions
 export const ROLES = {
+  SUPERADMIN: 'superadmin',
   ADMIN: 'admin',
   TEACHER: 'teacher',
   STUDENT: 'student'
@@ -8,48 +9,55 @@ export const ROLES = {
 // Permission definitions
 export const PERMISSIONS = {
   // Students
-  VIEW_STUDENTS: ['admin', 'teacher'],
-  CREATE_STUDENTS: ['admin'],
-  UPDATE_STUDENTS: ['admin'],
-  DELETE_STUDENTS: ['admin'],
+  VIEW_STUDENTS: ['superadmin', 'admin', 'teacher'],
+  CREATE_STUDENTS: ['superadmin', 'admin'],
+  UPDATE_STUDENTS: ['superadmin', 'admin'],
+  DELETE_STUDENTS: ['superadmin', 'admin'],
 
   // Teachers
-  VIEW_TEACHERS: ['admin', 'teacher'],
-  CREATE_TEACHERS: ['admin'],
-  UPDATE_TEACHERS: ['admin'],
-  DELETE_TEACHERS: ['admin'],
+  VIEW_TEACHERS: ['superadmin', 'admin', 'teacher'],
+  CREATE_TEACHERS: ['superadmin', 'admin'],
+  UPDATE_TEACHERS: ['superadmin', 'admin'],
+  DELETE_TEACHERS: ['superadmin', 'admin'],
 
   // Classes
-  VIEW_CLASSES: ['admin', 'teacher', 'student'],
-  CREATE_CLASSES: ['admin'],
-  UPDATE_CLASSES: ['admin', 'teacher'], // Teachers can update their own classes
-  DELETE_CLASSES: ['admin'],
+  VIEW_CLASSES: ['superadmin', 'admin', 'teacher', 'student'],
+  CREATE_CLASSES: ['superadmin', 'admin'],
+  UPDATE_CLASSES: ['superadmin', 'admin', 'teacher'], // Teachers can update their own classes
+  DELETE_CLASSES: ['superadmin', 'admin'],
 
   // Enrollments
-  VIEW_ENROLLMENTS: ['admin', 'teacher', 'student'], // Students can see their own
-  CREATE_ENROLLMENTS: ['admin', 'teacher'],
-  UPDATE_ENROLLMENTS: ['admin'],
-  DELETE_ENROLLMENTS: ['admin', 'teacher'],
+  VIEW_ENROLLMENTS: ['superadmin', 'admin', 'teacher', 'student'], // Students can see their own
+  CREATE_ENROLLMENTS: ['superadmin', 'admin', 'teacher'],
+  UPDATE_ENROLLMENTS: ['superadmin', 'admin'],
+  DELETE_ENROLLMENTS: ['superadmin', 'admin', 'teacher'],
 
-  // Users
-  VIEW_USERS: ['admin'],
-  CREATE_USERS: ['admin'],
-  UPDATE_USERS: ['admin'], // Users can update their own profile
-  DELETE_USERS: ['admin'],
+  // Users - Super Admin can manage admins, admins cannot
+  VIEW_USERS: ['superadmin', 'admin'],
+  CREATE_USERS: ['superadmin', 'admin'],
+  UPDATE_USERS: ['superadmin', 'admin'], // Users can update their own profile
+  DELETE_USERS: ['superadmin'], // Only superadmin can delete users
+  MANAGE_ADMINS: ['superadmin'], // Only superadmin can create/edit/delete admins
+  CHANGE_ROLES: ['superadmin'], // Only superadmin can change user roles
 
   // Messages
-  VIEW_MESSAGES: ['admin', 'teacher', 'student'], // Users can see their own messages
-  CREATE_MESSAGES: ['admin', 'teacher', 'student'],
-  DELETE_MESSAGES: ['admin'], // And message owner
+  VIEW_MESSAGES: ['superadmin', 'admin', 'teacher', 'student'], // Users can see their own messages
+  CREATE_MESSAGES: ['superadmin', 'admin', 'teacher', 'student'],
+  DELETE_MESSAGES: ['superadmin', 'admin'], // And message owner
 
   // Analytics
-  VIEW_ANALYTICS: ['admin', 'teacher'],
+  VIEW_ANALYTICS: ['superadmin', 'admin', 'teacher'],
 
   // Schools & Branches
-  VIEW_SCHOOLS: ['admin', 'teacher'],
-  MANAGE_SCHOOLS: ['admin'],
-  VIEW_BRANCHES: ['admin', 'teacher'],
-  MANAGE_BRANCHES: ['admin']
+  VIEW_SCHOOLS: ['superadmin', 'admin', 'teacher'],
+  MANAGE_SCHOOLS: ['superadmin', 'admin'],
+  VIEW_BRANCHES: ['superadmin', 'admin', 'teacher'],
+  MANAGE_BRANCHES: ['superadmin', 'admin'],
+
+  // System Settings (Super Admin Only)
+  SYSTEM_SETTINGS: ['superadmin'],
+  VIEW_LOGS: ['superadmin'],
+  MANAGE_SYSTEM: ['superadmin']
 };
 
 // Check if user has specific permission
@@ -85,12 +93,16 @@ export const requirePermission = (permission) => {
   };
 };
 
-// Check if user is admin
-export const isAdmin = (userRole) => userRole === ROLES.ADMIN;
+// Check if user is super admin
+export const isSuperAdmin = (userRole) => userRole === ROLES.SUPERADMIN;
+
+// Check if user is admin (includes super admin)
+export const isAdmin = (userRole) => 
+  userRole === ROLES.ADMIN || userRole === ROLES.SUPERADMIN;
 
 // Check if user is teacher or admin
 export const isTeacherOrAdmin = (userRole) => 
-  userRole === ROLES.TEACHER || userRole === ROLES.ADMIN;
+  userRole === ROLES.TEACHER || userRole === ROLES.ADMIN || userRole === ROLES.SUPERADMIN;
 
 // Check if user can access resource (owner or admin)
 export const canAccessResource = (userId, resourceUserId, userRole) => {
