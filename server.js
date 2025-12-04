@@ -31,6 +31,10 @@ const corsOptions = {
       'http://localhost:3000',
       process.env.FRONTEND_URL,
       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+      'https://macaalin.com',
+      'https://www.macaalin.com',
+      'http://macaalin.com',
+      'http://www.macaalin.com'
     ].filter(Boolean);
     
     // Allow if origin is in allowed list or if in development
