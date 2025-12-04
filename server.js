@@ -51,6 +51,7 @@ const corsOptions = {
 };
 // maxamuud
 //branchesadda
+//school buursaalax
 
 app.use(cors(corsOptions));
 app.use(express.json());
