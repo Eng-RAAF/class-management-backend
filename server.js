@@ -54,8 +54,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 // maxamuud
-//branchesadda
-//school buursaalax
+//xaadir
 
 app.use(cors(corsOptions));
 app.use(express.json());
