@@ -10,6 +10,7 @@ import messagesRoutes from '../routes/messages.js';
 import analyticsRoutes from '../routes/analytics.js';
 import schoolsRoutes from '../routes/schools.js';
 import branchesRoutes from '../routes/branches.js';
+import testTokenRoutes from '../routes/test-token.js';
 
 const app = express();
 
@@ -86,6 +87,7 @@ app.use('/api/messages', messagesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/schools', schoolsRoutes);
 app.use('/api/branches', branchesRoutes);
+app.use('/api/test', testTokenRoutes);
 
 // 404 handler
 app.use((req, res) => {

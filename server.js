@@ -10,6 +10,7 @@ import messagesRoutes from './routes/messages.js';
 import analyticsRoutes from './routes/analytics.js';
 import schoolsRoutes from './routes/schools.js';
 import branchesRoutes from './routes/branches.js';
+import testTokenRoutes from './routes/test-token.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
