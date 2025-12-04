@@ -26,7 +26,11 @@ const corsOptions = {
       'http://localhost:5174',
       'http://127.0.0.1:5173',
       process.env.FRONTEND_URL,
-      'https://class-management-frontend.vercel.app'
+      'https://class-management-frontend.vercel.app',
+      'https://macaalin.com',
+      'https://www.macaalin.com',
+      'http://macaalin.com',
+      'http://www.macaalin.com'
     ].filter(Boolean); // Remove undefined values
 
     // For development, also allow any localhost
