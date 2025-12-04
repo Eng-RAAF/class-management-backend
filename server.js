@@ -57,6 +57,7 @@ const corsOptions = {
 };
 // maxamuud
 //sahaln
+//superadmin
 
 app.use(cors(corsOptions));
 app.use(express.json());
