@@ -1,10 +1,11 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
+import { authenticate, requireTeacher } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get overall statistics
-router.get('/stats', async (req, res) => {
+// Get overall statistics - requires teacher or admin role
+router.get('/stats', authenticate, requireTeacher, async (req, res) => {
   try {
     // Check if Prisma is initialized
     if (!prisma) {
@@ -66,7 +67,7 @@ router.get('/stats', async (req, res) => {
 });
 
 // Get enrollment statistics by class
-router.get('/enrollments-by-class', async (req, res) => {
+router.get('/enrollments-by-class', authenticate, requireTeacher, async (req, res) => {
   try {
     const enrollments = await prisma.enrollment.groupBy({
       by: ['classId'],
@@ -105,7 +106,7 @@ router.get('/enrollments-by-class', async (req, res) => {
 });
 
 // Get students by grade
-router.get('/students-by-grade', async (req, res) => {
+router.get('/students-by-grade', authenticate, requireTeacher, async (req, res) => {
   try {
     const students = await prisma.student.findMany({
       where: {
@@ -135,7 +136,7 @@ router.get('/students-by-grade', async (req, res) => {
 });
 
 // Get recent enrollments
-router.get('/recent-enrollments', async (req, res) => {
+router.get('/recent-enrollments', authenticate, requireTeacher, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
     
@@ -170,7 +171,7 @@ router.get('/recent-enrollments', async (req, res) => {
 });
 
 // Get class capacity utilization
-router.get('/class-capacity', async (req, res) => {
+router.get('/class-capacity', authenticate, requireTeacher, async (req, res) => {
   try {
     const classes = await prisma.class.findMany({
       select: {
@@ -213,7 +214,7 @@ router.get('/class-capacity', async (req, res) => {
 });
 
 // Get activity timeline (recent activities)
-router.get('/activity-timeline', async (req, res) => {
+router.get('/activity-timeline', authenticate, requireTeacher, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
 

@@ -1,10 +1,11 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
+import { authenticate, requireStudent } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all messages for a user (both sent and received)
-router.get('/', async (req, res) => {
+// Get all messages for a user (both sent and received) - requires authentication
+router.get('/', authenticate, requireStudent, async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
     

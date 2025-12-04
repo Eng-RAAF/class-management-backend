@@ -1,11 +1,12 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
 import bcrypt from 'bcryptjs';
+import { authenticate, requireAdmin, authorizeOwnerOrAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all users
-router.get('/', async (req, res) => {
+// Get all users - requires admin role
+router.get('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
       select: {

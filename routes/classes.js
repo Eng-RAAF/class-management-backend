@@ -6,13 +6,12 @@ import {
   updateClass,
   deleteClass
 } from '../data/storage.js';
+import { authenticate, requireAdmin, requireTeacher, requireStudent } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all classes
-//
-//ali nuux
-router.get('/', async (req, res) => {
+// Get all classes - accessible to all authenticated users
+router.get('/', authenticate, requireStudent, async (req, res) => {
   try {
     const classes = await getClasses();
     res.json(classes);
@@ -21,8 +20,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get class by ID
-router.get('/:id', async (req, res) => {
+// Get class by ID - accessible to all authenticated users
+router.get('/:id', authenticate, requireStudent, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const classItem = await getClassById(id);
@@ -35,8 +34,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new class
-router.post('/', async (req, res) => {
+// Create new class - requires admin role
+router.post('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const { name, code, description, teacherId, schedule, capacity } = req.body;
     
@@ -67,8 +66,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update class
-router.put('/:id', async (req, res) => {
+// Update class - requires admin role
+router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const classItem = await getClassById(id);
@@ -102,8 +101,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete class
-router.delete('/:id', async (req, res) => {
+// Delete class - requires admin role
+router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const classItem = await getClassById(id);

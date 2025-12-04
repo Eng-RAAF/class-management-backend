@@ -10,11 +10,12 @@ import {
   getStudentById,
   getClassById
 } from '../data/storage.js';
+import { authenticate, requireAdmin, requireTeacher, requireStudent } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all enrollments
-router.get('/', async (req, res) => {
+// Get all enrollments - requires teacher or admin role
+router.get('/', authenticate, requireTeacher, async (req, res) => {
   try {
     const enrollments = await getEnrollments();
     res.json(enrollments);
@@ -23,8 +24,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get enrollment by ID
-router.get('/:id', async (req, res) => {
+// Get enrollment by ID - requires authentication
+router.get('/:id', authenticate, requireStudent, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const enrollment = await getEnrollmentById(id);
@@ -110,8 +111,8 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Unenroll student from class
-router.delete('/student/:studentId/class/:classId', async (req, res) => {
+// Unenroll student from class - requires teacher or admin role
+router.delete('/student/:studentId/class/:classId', authenticate, requireTeacher, async (req, res) => {
   try {
     const studentId = parseInt(req.params.studentId);
     const classId = parseInt(req.params.classId);

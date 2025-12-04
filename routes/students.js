@@ -6,11 +6,12 @@ import {
   updateStudent,
   deleteStudent
 } from '../data/storage.js';
+import { authenticate, requireAdmin, requireTeacher } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all students
-router.get('/', async (req, res) => {
+// Get all students - requires teacher or admin role
+router.get('/', authenticate, requireTeacher, async (req, res) => {
   try {
     const students = await getStudents();
     res.json(students);
@@ -19,8 +20,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get student by ID
-router.get('/:id', async (req, res) => {
+// Get student by ID - requires teacher or admin role
+router.get('/:id', authenticate, requireTeacher, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const student = await getStudentById(id);
@@ -33,8 +34,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new student
-router.post('/', async (req, res) => {
+// Create new student - requires admin role
+router.post('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const { name, email, age, grade } = req.body;
     
@@ -106,8 +107,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update student
-router.put('/:id', async (req, res) => {
+// Update student - requires admin role
+router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const student = await getStudentById(id);
@@ -139,8 +140,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete student
-router.delete('/:id', async (req, res) => {
+// Delete student - requires admin role
+router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const student = await getStudentById(id);

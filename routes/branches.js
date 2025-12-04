@@ -7,6 +7,7 @@ import {
   updateBranch,
   deleteBranch
 } from '../data/storage.js';
+import { authenticate, requireAdmin, requireTeacher } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 //branchesadda
 //schooladda
 //branchupdate
-router.get('/', async (req, res) => {
+router.get('/', authenticate, requireTeacher, async (req, res) => {
   try {
     const branches = await getBranches();
     res.json(branches);
@@ -24,7 +25,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get branches by school
-router.get('/school/:schoolId', async (req, res) => {
+router.get('/school/:schoolId', authenticate, requireTeacher, async (req, res) => {
   try {
     const schoolId = parseInt(req.params.schoolId);
     const branches = await getBranchesBySchool(schoolId);
@@ -35,7 +36,7 @@ router.get('/school/:schoolId', async (req, res) => {
 });
 
 // Get branch by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, requireTeacher, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const branch = await getBranchById(id);
@@ -49,7 +50,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new branch
-router.post('/', async (req, res) => {
+router.post('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const { name, code, schoolId, address, phone, email, manager, description } = req.body;
     
@@ -93,7 +94,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update branch
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const branch = await getBranchById(id);
@@ -128,7 +129,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete branch
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const branch = await getBranchById(id);

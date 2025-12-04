@@ -6,11 +6,12 @@ import {
   updateTeacher,
   deleteTeacher
 } from '../data/storage.js';
+import { authenticate, requireAdmin, requireTeacher } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all teachers
-router.get('/', async (req, res) => {
+// Get all teachers - requires teacher or admin role
+router.get('/', authenticate, requireTeacher, async (req, res) => {
   try {
     const teachers = await getTeachers();
     res.json(teachers);
@@ -19,8 +20,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get teacher by ID
-router.get('/:id', async (req, res) => {
+// Get teacher by ID - requires teacher or admin role
+router.get('/:id', authenticate, requireTeacher, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const teacher = await getTeacherById(id);
@@ -33,8 +34,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new teacher
-router.post('/', async (req, res) => {
+// Create new teacher - requires admin role
+router.post('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const { name, email, subject, department } = req.body;
     
@@ -60,8 +61,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update teacher
-router.put('/:id', async (req, res) => {
+// Update teacher - requires admin role
+router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const teacher = await getTeacherById(id);
@@ -90,8 +91,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete teacher
-router.delete('/:id', async (req, res) => {
+// Delete teacher - requires admin role
+router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const teacher = await getTeacherById(id);
