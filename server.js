@@ -74,6 +74,7 @@ app.use('/api/teachers', teachersRoutes);
 app.use('/api/enrollments', enrollmentsRoutes);
 app.use('/api/schools', schoolsRoutes);
 app.use('/api/branches', branchesRoutes);
+app.use('/api/superadmin', superadminRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -90,7 +91,8 @@ app.get('/', (req, res) => {
       teachers: '/api/teachers',
       enrollments: '/api/enrollments',
       schools: '/api/schools',
-      branches: '/api/branches'
+      branches: '/api/branches',
+      superadmin: '/api/superadmin'
     }
   });
 });
