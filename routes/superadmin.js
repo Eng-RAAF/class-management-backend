@@ -1,14 +1,48 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
 import bcrypt from 'bcryptjs';
-import { authenticate, requireSuperAdmin } from '../middleware/auth.js';
+import { authenticate, requireSuperAdmin, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all users including admins - Super Admin only
-router.get('/users/all', authenticate, requireSuperAdmin, async (req, res) => {
+// Get all users - Role-based access
+// Super Admin: All users
+// Admin: Teachers and Students only
+// Teacher: Students only
+// Student: No access
+router.get('/users/all', authenticate, authorize('superadmin', 'admin', 'teacher'), async (req, res) => {
   try {
+    const requesterRole = req.userRole;
+    const requesterId = req.userId;
+    
+    // Build query based on requester's role
+    let whereClause = {};
+    
+    // Super Admin: Can see all users
+    if (requesterRole === 'superadmin') {
+      // No filter - show all users
+      whereClause = {};
+    } else if (requesterRole === 'admin') {
+      // Admin: Can see teachers and students only (not other admins/superadmins)
+      whereClause = {
+        role: {
+          in: ['teacher', 'student']
+        }
+      };
+    } else if (requesterRole === 'teacher') {
+      // Teacher: Can see students only
+      whereClause = {
+        role: 'student'
+      };
+    } else {
+      // Student: Can see nothing (empty result)
+      whereClause = {
+        id: -1 // Impossible condition
+      };
+    }
+    
     const users = await prisma.user.findMany({
+      where: whereClause,
       select: {
         id: true,
         email: true,
@@ -45,13 +79,15 @@ router.put('/users/:id/role', authenticate, requireSuperAdmin, async (req, res) 
       });
     }
 
-    // Prevent super admin from demoting themselves
+    // Prevent super admin from demoting themselves (but allow managing others)
     if (userId === req.userId && role !== 'superadmin') {
       return res.status(400).json({ 
         error: 'Cannot change your own role',
         message: 'Super admins cannot demote themselves'
       });
     }
+    
+    // Allow changing other superadmin roles (removed restriction)
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -159,13 +195,15 @@ router.delete('/users/:id', authenticate, requireSuperAdmin, async (req, res) =>
   try {
     const userId = parseInt(req.params.id);
 
-    // Prevent deleting yourself
+    // Prevent deleting yourself (but allow deleting other superadmins)
     if (userId === req.userId) {
       return res.status(400).json({ 
         error: 'Cannot delete yourself',
         message: 'Super admins cannot delete their own account'
       });
     }
+    
+    // Allow deleting other superadmins (removed restriction)
 
     await prisma.user.delete({
       where: { id: userId }
