@@ -516,3 +516,209 @@ export const deleteBranch = async (id) => {
   });
 };
 
+// Lesson Plans
+export const getLessonPlans = async (filters = {}) => {
+  const where = {};
+  
+  if (filters.teacherId) {
+    where.teacherId = parseInt(filters.teacherId);
+  }
+  
+  if (filters.classId) {
+    where.classId = parseInt(filters.classId);
+  }
+  
+  if (filters.status) {
+    where.status = filters.status;
+  }
+  
+  return await prisma.lessonPlan.findMany({
+    where,
+    include: {
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      },
+      class: {
+        select: {
+          id: true,
+          name: true,
+          code: true
+        }
+      }
+    },
+    orderBy: { date: 'desc' }
+  });
+};
+
+export const getLessonPlanById = async (id) => {
+  return await prisma.lessonPlan.findUnique({
+    where: { id: parseInt(id) },
+    include: {
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      },
+      class: {
+        select: {
+          id: true,
+          name: true,
+          code: true
+        }
+      }
+    }
+  });
+};
+
+export const addLessonPlan = async (lessonPlanData) => {
+  const data = {
+    title: String(lessonPlanData.title || '').trim(),
+    teacherId: parseInt(lessonPlanData.teacherId),
+    date: new Date(lessonPlanData.date),
+    status: lessonPlanData.status || 'draft',
+  };
+  
+  if (!data.title || !data.teacherId) {
+    throw new Error('Title and teacher ID are required');
+  }
+  
+  // Optional fields
+  if (lessonPlanData.description) {
+    data.description = String(lessonPlanData.description).trim();
+  }
+  
+  if (lessonPlanData.subject) {
+    data.subject = String(lessonPlanData.subject).trim();
+  }
+  
+  if (lessonPlanData.classId) {
+    data.classId = parseInt(lessonPlanData.classId);
+  }
+  
+  if (lessonPlanData.objectives) {
+    data.objectives = String(lessonPlanData.objectives).trim();
+  }
+  
+  if (lessonPlanData.materials) {
+    data.materials = String(lessonPlanData.materials).trim();
+  }
+  
+  if (lessonPlanData.activities) {
+    data.activities = String(lessonPlanData.activities).trim();
+  }
+  
+  if (lessonPlanData.homework) {
+    data.homework = String(lessonPlanData.homework).trim();
+  }
+  
+  if (lessonPlanData.notes) {
+    data.notes = String(lessonPlanData.notes).trim();
+  }
+  
+  return await prisma.lessonPlan.create({
+    data,
+    include: {
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      },
+      class: {
+        select: {
+          id: true,
+          name: true,
+          code: true
+        }
+      }
+    }
+  });
+};
+
+export const updateLessonPlan = async (id, lessonPlanData) => {
+  const existing = await getLessonPlanById(id);
+  if (!existing) {
+    throw new Error('Lesson plan not found');
+  }
+  
+  const data = {};
+  
+  if (lessonPlanData.title !== undefined) {
+    data.title = String(lessonPlanData.title).trim();
+  }
+  
+  if (lessonPlanData.date !== undefined) {
+    data.date = new Date(lessonPlanData.date);
+  }
+  
+  if (lessonPlanData.status !== undefined) {
+    data.status = String(lessonPlanData.status).trim();
+  }
+  
+  if (lessonPlanData.description !== undefined) {
+    data.description = lessonPlanData.description ? String(lessonPlanData.description).trim() : null;
+  }
+  
+  if (lessonPlanData.subject !== undefined) {
+    data.subject = lessonPlanData.subject ? String(lessonPlanData.subject).trim() : null;
+  }
+  
+  if (lessonPlanData.classId !== undefined) {
+    data.classId = lessonPlanData.classId ? parseInt(lessonPlanData.classId) : null;
+  }
+  
+  if (lessonPlanData.objectives !== undefined) {
+    data.objectives = lessonPlanData.objectives ? String(lessonPlanData.objectives).trim() : null;
+  }
+  
+  if (lessonPlanData.materials !== undefined) {
+    data.materials = lessonPlanData.materials ? String(lessonPlanData.materials).trim() : null;
+  }
+  
+  if (lessonPlanData.activities !== undefined) {
+    data.activities = lessonPlanData.activities ? String(lessonPlanData.activities).trim() : null;
+  }
+  
+  if (lessonPlanData.homework !== undefined) {
+    data.homework = lessonPlanData.homework ? String(lessonPlanData.homework).trim() : null;
+  }
+  
+  if (lessonPlanData.notes !== undefined) {
+    data.notes = lessonPlanData.notes ? String(lessonPlanData.notes).trim() : null;
+  }
+  
+  return await prisma.lessonPlan.update({
+    where: { id: parseInt(id) },
+    data,
+    include: {
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      },
+      class: {
+        select: {
+          id: true,
+          name: true,
+          code: true
+        }
+      }
+    }
+  });
+};
+
+export const deleteLessonPlan = async (id) => {
+  return await prisma.lessonPlan.delete({
+    where: { id: parseInt(id) }
+  });
+};
+

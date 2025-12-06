@@ -12,6 +12,7 @@ import schoolsRoutes from '../routes/schools.js';
 import branchesRoutes from '../routes/branches.js';
 import testTokenRoutes from '../routes/test-token.js';
 import superadminRoutes from '../routes/superadmin.js';
+import lessonPlansRoutes from '../routes/lessonPlans.js';
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use('/api/schools', schoolsRoutes);
 app.use('/api/branches', branchesRoutes);
 app.use('/api/test', testTokenRoutes);
 app.use('/api/superadmin', superadminRoutes);
+app.use('/api/lesson-plans', lessonPlansRoutes);
 
 // 404 handler
 app.use((req, res) => {

@@ -12,6 +12,7 @@ import schoolsRoutes from './routes/schools.js';
 import branchesRoutes from './routes/branches.js';
 import testTokenRoutes from './routes/test-token.js';
 import superadminRoutes from './routes/superadmin.js';
+import lessonPlansRoutes from './routes/lessonPlans.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -75,6 +76,7 @@ app.use('/api/enrollments', enrollmentsRoutes);
 app.use('/api/schools', schoolsRoutes);
 app.use('/api/branches', branchesRoutes);
 app.use('/api/superadmin', superadminRoutes);
+app.use('/api/lesson-plans', lessonPlansRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -92,7 +94,8 @@ app.get('/', (req, res) => {
       enrollments: '/api/enrollments',
       schools: '/api/schools',
       branches: '/api/branches',
-      superadmin: '/api/superadmin'
+      superadmin: '/api/superadmin',
+      lessonPlans: '/api/lesson-plans'
     }
   });
 });
