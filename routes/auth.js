@@ -102,9 +102,24 @@ router.post('/register', async (req, res) => {
 
     // Check if user already exists (email)
     const normalizedEmail = email.toLowerCase().trim();
-    const existingUserByEmail = await prisma.user.findUnique({
-      where: { email: normalizedEmail }
-    });
+    let existingUserByEmail;
+    try {
+      existingUserByEmail = await prisma.user.findUnique({
+        where: { email: normalizedEmail }
+      });
+    } catch (error) {
+      // Handle prepared statement errors
+      if (error.message?.includes('prepared statement') || error.message?.includes('42P05')) {
+        console.error('Prepared statement error during user lookup, retrying...');
+        // Retry once after a short delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        existingUserByEmail = await prisma.user.findUnique({
+          where: { email: normalizedEmail }
+        });
+      } else {
+        throw error;
+      }
+    }
 
     if (existingUserByEmail) {
       return res.status(400).json({ error: 'User with this email already exists' });
@@ -147,9 +162,23 @@ router.post('/register', async (req, res) => {
       }
 
       // Check if phone number is already registered
-      const existingUserByPhone = await prisma.user.findUnique({
-        where: { phoneNumber: formattedPhone }
-      });
+      let existingUserByPhone;
+      try {
+        existingUserByPhone = await prisma.user.findUnique({
+          where: { phoneNumber: formattedPhone }
+        });
+      } catch (error) {
+        // Handle prepared statement errors
+        if (error.message?.includes('prepared statement') || error.message?.includes('42P05')) {
+          console.error('Prepared statement error during phone lookup, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+          existingUserByPhone = await prisma.user.findUnique({
+            where: { phoneNumber: formattedPhone }
+          });
+        } else {
+          throw error;
+        }
+      }
 
       if (existingUserByPhone) {
         return res.status(400).json({ error: 'Phone number is already registered' });
